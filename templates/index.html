@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI News Classifier | Insight Engine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="glass-card">
+            <header>
+                <h1>AI News Classifier</h1>
+                <p class="subtitle">Enter a news headline or description to categorize it.</p>
+            </header>
+
+            <form action="/predict" method="POST">
+                <div class="input-section">
+                    {% if error %}
+                        <p class="error-msg">{{ error }}</p>
+                    {% endif %}
+                    <textarea name="text" placeholder="Paste your news content here..." required>{{ text|default('') }}</textarea>
+                </div>
+                <div class="btn-container">
+                    <button type="submit">Classify News</button>
+                </div>
+            </form>
+
+            {% if results|default(false) %}
+            <div class="results-section">
+                <header>
+                    <h2>Classification Results</h2>
+                    <p class="subtitle">Top predicted categories for your input.</p>
+                </header>
+                
+                {% for res in results %}
+                <div class="result-item">
+                    <div class="result-header">
+                        <span class="category-name">{{ res.category }}</span>
+                        <span class="probability-val">{{ res.probability }}%</span>
+                    </div>
+                    <div class="progress-bg">
+                        <div class="progress-fill" style="width: {{ res.probability }}%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <footer>
+            <p>Designed & Developed by <a href="https://qurashi.vercel.app" target="_blank">Majid Qurashi</a></p>
+        </footer>
+    </div>
+</body>
+</html>
