@@ -1,57 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI News Classifier | Insight Engine</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;800&display=swap" rel="stylesheet">
 </head>
+
 <body>
+    <div class="bg-blobs">
+        <div class="blob"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
     <div class="container">
         <div class="glass-card">
             <header>
-                <h1>AI News Classifier</h1>
-                <p class="subtitle">Enter a news headline or description to categorize it.</p>
+                <h1>Ai News Classifier</h1>
+                <p class="subtitle">AI-Powered Neural News Classification</p>
             </header>
 
             <form action="/predict" method="POST">
                 <div class="input-section">
                     {% if error %}
-                        <p class="error-msg">{{ error }}</p>
+                    <p class="error-msg" style="color: var(--accent-teal); font-weight: 600;">{{ error }}</p>
                     {% endif %}
-                    <textarea name="text" placeholder="Paste your news content here..." required>{{ text|default('') }}</textarea>
+                    <textarea name="text" placeholder="Paste news headline or full article text here..."
+                        required>{{ text|default('') }}</textarea>
                 </div>
                 <div class="btn-container">
-                    <button type="submit">Classify News</button>
+                    <button type="submit">
+                        <span>Analyze Content</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
                 </div>
             </form>
 
-            {% if results|default(false) %}
-            <div class="results-section">
-                <header>
-                    <h2>Classification Results</h2>
-                    <p class="subtitle">Top predicted categories for your input.</p>
-                </header>
-                
-                {% for res in results %}
-                <div class="result-item">
-                    <div class="result-header">
-                        <span class="category-name">{{ res.category }}</span>
-                        <span class="probability-val">{{ res.probability }}%</span>
+            {% if results %}
+            <section class="results-section">
+                <h2 class="section-title">Analysis Results</h2>
+                <div class="bento-grid">
+                    {% for res in results %}
+                    {% set is_top = loop.first %}
+                    <div class="bento-card {% if is_top %}top-prediction{% endif %}">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                {% if res.category == 'World' %}🌍
+                                {% elif res.category == 'Sports' %}🏆
+                                {% elif res.category == 'Business' %}💼
+                                {% elif res.category == 'Sci/Tech' %}💻
+                                {% else %}📰{% endif %}
+                            </div>
+                            <span class="card-label">{{ res.category }}</span>
+                        </div>
+
+                        <div class="card-body">
+                            {% if is_top %}
+                            <div class="prediction-name">Primary Match</div>
+                            {% endif %}
+                            <div class="card-value">{{ res.probability }}<span>%</span></div>
+                            <div class="mini-progress">
+                                <div class="mini-progress-fill"
+                                    style="width: {{ res.probability }}%; {% if is_top %}background: linear-gradient(90deg, var(--accent-teal), var(--accent-violet));{% endif %}">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="progress-bg">
-                        <div class="progress-fill" style="width: {{ res.probability }}%;"></div>
-                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            </div>
+            </section>
             {% endif %}
         </div>
+
         <footer>
-            <p> &copy; Designed & Developed by <a href="https://qurashi.vercel.app" target="_blank">Majid Qurashi</a></p>
+            <p>Built with Neural Precision &bull; <a href="https://qurashi.vercel.app" target="_blank">Majid Qurashi</a>
+                &copy; 2026</p>
         </footer>
     </div>
 </body>
+
 </html>
